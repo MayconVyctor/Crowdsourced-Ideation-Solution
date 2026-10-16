@@ -11,7 +11,7 @@
 
 ---
 
-## 📌 Overview
+## Overview
 
 The **Crowdsourced Ideation Solution (CIS)** is an enterprise distributed microservices platform designed to drive collaborative problem-solving, topic curation, idea submission, and community voting within organizations.
 
@@ -19,7 +19,7 @@ Built under the **API-First** paradigm and strict **Clean Architecture / S.O.L.I
 
 ---
 
-## 🏛️ High-Level System Architecture
+## High-Level System Architecture
 
 ```text
                                ┌─────────────────────────┐
@@ -50,7 +50,7 @@ Built under the **API-First** paradigm and strict **Clean Architecture / S.O.L.I
 
 ---
 
-## 📂 Repository Structure & Components
+## Repository Structure & Components
 
 This monorepo consolidates all microservices, specifications, and tooling powering the platform:
 
@@ -66,7 +66,7 @@ Crowdsourced-Ideation-Solution/
 
 ---
 
-### 1. 🚀 `cis-api` (.NET C# Backend)
+### 1. cis-api (.NET C# Backend)
 The core ideation microservice built on **.NET 8** and **C#**:
 * **Layered Clean Architecture:** Divided into `Cis.Core.Domain`, `Cis.Core.Application`, `Cis.Infrastructure.MySql`, `Cis.Infrastructure.Ioc`, and `Cis.Server` (Web API).
 * **Domain Model:** Topics, Ideas, and Votes with strict encapsulation, business validation, and domain events.
@@ -74,26 +74,26 @@ The core ideation microservice built on **.NET 8** and **C#**:
 * **Database-as-Code:** Schema evolution managed through automated **Liquibase** containers executing repeatable, idempotent SQL migrations against `sd3_cisdb`.
 * **Middlewares:** Centralized `ExceptionHandlingMiddleware` for consistent error structures (`RFC 7807`).
 
-### 2. 📋 `cis-api-swagger` (API-First Specification & Mock)
+### 2. cis-api-swagger (API-First Specification & Mock)
 The single source of truth for the CIS service:
 * **OpenAPI 3.0.3 Specification (`openapi.yaml`):** Comprehensive schema definition for Topics, Ideas, and Votes, including query filters, error schemas, and Bearer auth.
 * **Stoplight Prism Mock Server:** Containerized mock server running on port `4020` allowing immediate zero-code validation and client integration.
 
-### 3. ☕ `users-api` (Java Spring Boot Identity Service)
+### 3. users-api (Java Spring Boot Identity Service)
 Enterprise user management service built with **Java 21**:
 * **Hexagonal / Clean Architecture:** Completely isolated domain (`domain`, `application`, `infrastructure/mysql`, `presentation`).
 * **Security:** **Spring Security OAuth2 Resource Server** validating JWT tokens issued by Keycloak (`local-dev` realm).
 * **Persistence:** MySQL persistence with Spring Data JPA / Hibernate and automated timestamp tracking (`createdAt`, `updatedAt`).
 
-### 4. 📄 `users-api-swagger` (Users Service Contract)
+### 4. users-api-swagger (Users Service Contract)
 The formal OpenAPI contract and Prism simulation environment (port `4010`) for all user lifecycle operations (Create, Read, Update, Delete).
 
-### 5. 💻 `users-cli` (Console Client Tool)
+### 5. users-cli (Console Client Tool)
 A command-line administration utility supporting developer operations, database bootstrapping, and automated testing against the endpoints.
 
 ---
 
-## 🛠️ Key Architectural & Engineering Highlights
+## Key Architectural & Engineering Highlights
 
 | Practice | Implementation in Solution |
 | :--- | :--- |
@@ -106,7 +106,7 @@ A command-line administration utility supporting developer operations, database 
 
 ---
 
-## 🚦 Quick Start Guide
+## Quick Start Guide
 
 ### Prerequisites
 * [Docker & Docker Compose](https://www.docker.com/)
@@ -156,7 +156,7 @@ docker compose up -d
 
 ---
 
-## 👨‍💻 Author
+## Author
 
 **Maycon Vyctor**  
 *Software Engineering | Distributed Systems & Cloud Architecture*  
