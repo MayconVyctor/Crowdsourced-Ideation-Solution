@@ -1,4 +1,4 @@
-# Crowdsourced Ideation Solution (CIS) — Enterprise Microservices Ecosystem
+# Crowdsourced Ideation Solution (CIS) — Ecossistema de Microsserviços
 
 [![.NET](https://img.shields.io/badge/.NET-8.0-512BD4?logo=dotnet)](https://dotnet.microsoft.com/)
 [![C#](https://img.shields.io/badge/C%23-12.0-239120?logo=csharp)](https://docs.microsoft.com/en-us/dotnet/csharp/)
@@ -11,136 +11,138 @@
 
 ---
 
-## Overview
+## Visão Geral
 
-The **Crowdsourced Ideation Solution (CIS)** is an enterprise distributed microservices platform designed to drive collaborative problem-solving, topic curation, idea submission, and community voting within organizations.
+O **Crowdsourced Ideation Solution (CIS)** é uma plataforma corporativa distribuída em microsserviços, projetada para impulsionar a resolução colaborativa de problemas, curadoria de tópicos, submissão de ideias e votação comunitária.
 
-Built under the **API-First** paradigm and strict **Clean Architecture / S.O.L.I.D.** principles, the ecosystem demonstrates seamless interoperability between a modern **.NET C#** ideation service and a core **Java Spring Boot** identity/user management system, bound by formal OpenAPI contracts and secured via **Keycloak OAuth2 / OpenID Connect**.
+Construído sob o paradigma **API-First** e princípios rigorosos de **Clean Architecture / S.O.L.I.D.**, o ecossistema demonstra interoperabilidade consistente entre um microsserviço de ideação em **.NET C#** e um serviço central de gestão de identidades e usuários em **Java Spring Boot**, integrados por contratos OpenAPI formais e protegidos via **Keycloak OAuth2 / OpenID Connect**.
+
+> **Contexto do Projeto:** Este ecossistema é desenvolvido de forma colaborativa em dupla para a matéria de **Desenvolvimento de Software 3**, com o fluxo de trabalho e versionamento principal distribuído em repositórios dedicados no GitLab. Este repositório no GitHub atua como uma consolidação em monorepo portando e unificando todos os módulos para demonstração técnica e portfólio.
 
 ---
 
-## High-Level System Architecture
+## Arquitetura do Sistema
 
 ```text
-                               ┌─────────────────────────┐
-                               │   API Consumers / CLI   │
-                               │  (Postman / users-cli)  │
-                               └────────────┬────────────┘
-                                            │
-                     ┌──────────────────────┴──────────────────────┐
-                     │ (HTTP / Bearer JWT)                         │ (HTTP / Bearer JWT)
-                     ▼                                             ▼
-        ┌─────────────────────────┐                   ┌─────────────────────────┐
-        │      CIS API (.NET)     │                   │     Users API (Java)    │
-        │   (Port 8002 / Mock)    │                   │       (Port 8001)       │
-        │                         │                   │                         │
-        │  • ASP.NET Core 8       │                   │  • Spring Boot 3        │
-        │  • Clean Architecture   │                   │  • Clean Architecture   │
-        │  • Entity Framework Core│                   │  • JPA / Hibernate      │
-        │  • Exception Middleware │                   │  • OAuth2 Resource Srvr │
-        └────────────┬────────────┘                   └────────────┬────────────┘
-                     │                                             │
-          ┌──────────┴──────────┐                       ┌──────────┴──────────┐
-          ▼                     ▼                       ▼                     ▼
-┌──────────────────┐  ┌──────────────────┐    ┌──────────────────┐  ┌──────────────────┐
-│  MySQL Database  │  │ Liquibase Runner │    │  MySQL Database  │  │  Keycloak IdP    │
-│   (sd3_cisdb)    │  │ (Docker Compose) │    │     (sd3db)      │  │   (Port 8080)    │
-└──────────────────┘  └──────────────────┘    └──────────────────┘  └──────────────────┘
+                                ┌─────────────────────────┐
+                                │   Clientes API / CLI    │
+                                │  (Postman / users-cli)  │
+                                └────────────┬────────────┘
+                                             │
+                      ┌──────────────────────┴──────────────────────┐
+                      │ (HTTP / Bearer JWT)                         │ (HTTP / Bearer JWT)
+                      ▼                                             ▼
+         ┌─────────────────────────┐                   ┌─────────────────────────┐
+         │      CIS API (.NET)     │                   │     Users API (Java)    │
+         │   (Porta 8002 / Mock)   │                   │       (Porta 8001)      │
+         │                         │                   │                         │
+         │  • ASP.NET Core 8       │                   │  • Spring Boot 3        │
+         │  • Clean Architecture   │                   │  • Clean Architecture   │
+         │  • Entity Framework Core│                   │  • JPA / Hibernate      │
+         │  • Middleware de Erros  │                   │  • OAuth2 Resource Srvr │
+         └────────────┬────────────┘                   └────────────┬────────────┘
+                      │                                             │
+           ┌──────────┴──────────┐                       ┌──────────┴──────────┐
+           ▼                     ▼                       ▼                     ▼
+ ┌──────────────────┐  ┌──────────────────┐    ┌──────────────────┐  ┌──────────────────┐
+ │  Banco de Dados  │  │ Runner Liquibase │    │  Banco de Dados  │  │   IdP Keycloak   │
+ │ MySQL(sd3_cisdb) │  │ (Docker Compose) │    │  MySQL (sd3db)   │  │   (Porta 8080)   │
+ └──────────────────┘  └──────────────────┘    └──────────────────┘  └──────────────────┘
 ```
 
 ---
 
-## Repository Structure & Components
+## Estrutura do Repositório e Componentes
 
-This monorepo consolidates all microservices, specifications, and tooling powering the platform:
+Este monorepo consolida todos os microsserviços, especificações e ferramentas que compõem o ecossistema:
 
 ```text
 Crowdsourced-Ideation-Solution/
-├── cis-api/             # .NET 8 C# Core Ideation Microservice
-├── cis-api-swagger/     # OpenAPI 3.0 Contract & Prism Mock Server for CIS (Port 4020)
-├── users-api/           # Java 21 / Spring Boot Identity Microservice (Port 8001)
-├── users-api-swagger/   # OpenAPI 3.0 Contract & Prism Mock Server for Users API (Port 4010)
-├── users-cli/           # Python/Java CLI Utility for platform administration
-└── README.md            # Master Architecture & Getting Started Guide
+├── cis-api/             # Microsserviço de ideação em .NET 8 C#
+├── cis-api-swagger/     # Contrato OpenAPI 3.0 e servidor de Mock Prism da CIS API (Porta 4020)
+├── users-api/           # Microsserviço de usuários em Java 21 / Spring Boot (Porta 8001)
+├── users-api-swagger/   # Contrato OpenAPI 3.0 e servidor de Mock Prism da Users API (Porta 4010)
+├── users-cli/           # Utilitário CLI para administração da plataforma
+└── README.md            # Arquitetura e guia de inicialização do ecossistema
 ```
 
 ---
 
-### 1. cis-api (.NET C# Backend)
-The core ideation microservice built on **.NET 8** and **C#**:
-* **Layered Clean Architecture:** Divided into `Cis.Core.Domain`, `Cis.Core.Application`, `Cis.Infrastructure.MySql`, `Cis.Infrastructure.Ioc`, and `Cis.Server` (Web API).
-* **Domain Model:** Topics, Ideas, and Votes with strict encapsulation, business validation, and domain events.
-* **ORM & Persistence:** **Entity Framework Core (Pomelo MySQL provider)** implementing the Repository Pattern.
-* **Database-as-Code:** Schema evolution managed through automated **Liquibase** containers executing repeatable, idempotent SQL migrations against `sd3_cisdb`.
-* **Middlewares:** Centralized `ExceptionHandlingMiddleware` for consistent error structures (`RFC 7807`).
+### 1. cis-api (Backend .NET C#)
+Microsserviço principal de ideação desenvolvido com **.NET 8** e **C#**:
+* **Clean Architecture em Camadas:** Organizado em `Cis.Core.Domain`, `Cis.Core.Application`, `Cis.Infrastructure.MySql`, `Cis.Infrastructure.Ioc` e `Cis.Server` (Web API).
+* **Modelo de Domínio:** Tópicos, Ideias e Votos com encapsulamento estrito, regras de negócio e eventos de domínio.
+* **ORM e Persistência:** **Entity Framework Core (provedor Pomelo MySQL)** implementando o padrão Repository.
+* **Database-as-Code:** Evolução de esquema controlada através de containers automatizados do **Liquibase**, executando migrações SQL idempotentes contra a base `sd3_cisdb`.
+* **Middlewares:** Centralização de erros e exceções via `ExceptionHandlingMiddleware` com retorno em formato padronizado (`RFC 7807`).
 
-### 2. cis-api-swagger (API-First Specification & Mock)
-The single source of truth for the CIS service:
-* **OpenAPI 3.0.3 Specification (`openapi.yaml`):** Comprehensive schema definition for Topics, Ideas, and Votes, including query filters, error schemas, and Bearer auth.
-* **Stoplight Prism Mock Server:** Containerized mock server running on port `4020` allowing immediate zero-code validation and client integration.
+### 2. cis-api-swagger (Especificação API-First e Mock)
+Fonte única da verdade contratual para o serviço de ideação:
+* **Especificação OpenAPI 3.0.3 (`openapi.yaml`):** Definição rigorosa de esquemas para Tópicos, Ideias e Votos, filtros de paginação, esquemas de erro e autenticação Bearer.
+* **Servidor de Mock Stoplight Prism:** Mock conteinerizado rodando na porta `4020`, permitindo testes e integração entre serviços antes mesmo do deploy do backend.
 
-### 3. users-api (Java Spring Boot Identity Service)
-Enterprise user management service built with **Java 21**:
-* **Hexagonal / Clean Architecture:** Completely isolated domain (`domain`, `application`, `infrastructure/mysql`, `presentation`).
-* **Security:** **Spring Security OAuth2 Resource Server** validating JWT tokens issued by Keycloak (`local-dev` realm).
-* **Persistence:** MySQL persistence with Spring Data JPA / Hibernate and automated timestamp tracking (`createdAt`, `updatedAt`).
+### 3. users-api (Serviço de Identidade Java Spring Boot)
+Microsserviço de gerenciamento de identidades e usuários desenvolvido com **Java 21**:
+* **Arquitetura Limpa / Hexagonal:** Isolamento completo do domínio em relação a frameworks (`domain`, `application`, `infrastructure/mysql`, `presentation`).
+* **Segurança:** **Spring Security OAuth2 Resource Server** com validação de tokens JWT emitidos pelo Keycloak (realm `local-dev`).
+* **Persistência:** Persistência MySQL via Spring Data JPA / Hibernate com auditoria temporal automática (`createdAt`, `updatedAt`).
 
-### 4. users-api-swagger (Users Service Contract)
-The formal OpenAPI contract and Prism simulation environment (port `4010`) for all user lifecycle operations (Create, Read, Update, Delete).
+### 4. users-api-swagger (Contrato da Users API)
+Contrato formal em OpenAPI e ambiente simulado via Prism (porta `4010`) para operações de ciclo de vida de usuários (Criação, Leitura, Atualização, Exclusão).
 
-### 5. users-cli (Console Client Tool)
-A command-line administration utility supporting developer operations, database bootstrapping, and automated testing against the endpoints.
+### 5. users-cli (Ferramenta de Linha de Comando)
+Utilitário de linha de comando voltado para operações de desenvolvimento, carga inicial de dados e testes diretos contra os endpoints.
 
 ---
 
-## Key Architectural & Engineering Highlights
+## Destaques de Engenharia e Arquitetura
 
-| Practice | Implementation in Solution |
+| Prática | Implementação no Projeto |
 | :--- | :--- |
-| **API-First Design** | Formal contract specification and mock servers deployed prior to any backend implementation, ensuring contractual alignment across distributed teams. |
-| **Clean Architecture** | Core domain models are 100% pure (zero framework dependencies). Infrastructure concerns (JPA, EF Core, HTTP) depend strictly inward. |
-| **S.O.L.I.D. Principles** | Single Responsibility per service/controller, Open/Closed for extensible vote calculation, Liskov Substitution across repository interfaces, and Dependency Inversion throughout. |
-| **Idempotent Migrations** | Database changes versioned via Liquibase changesets (`runOnChange:true`, `CREATE TABLE IF NOT EXISTS`), eliminating manual SQL scripts. |
-| **Zero-Trust Security** | Global asymmetric JWT Bearer authentication enforced via Keycloak IdP with role-based access control (`ROLE_user`). |
-| **Automated Testing** | Multi-layered testing strategy combining unit tests (**xUnit**, **Moq**, **FluentAssertions**, **JUnit 5**, **Mockito**), integration testing, and CI/CD quality gates. |
+| **Design API-First** | Especificações formais e servidores de mock criados antes da implementação dos backends, garantindo alinhamento contratual imediato entre serviços. |
+| **Clean Architecture** | Modelos de domínio puros sem acoplamento a bibliotecas externas. Camadas de infraestrutura (JPA, EF Core, HTTP) apontam exclusivamente para dentro. |
+| **Princípios S.O.L.I.D.** | Responsabilidade única por serviço/controller, Open/Closed no cálculo de votos, Substituição de Liskov nos repositórios e Inversão de Dependência total. |
+| **Migrações Idempotentes** | Controle de alterações de banco versionado via Liquibase changesets (`runOnChange:true`, `CREATE TABLE IF NOT EXISTS`), sem scripts manuais. |
+| **Segurança Zero-Trust** | Autenticação global por tokens JWT assinados pelo Keycloak IdP com controle de permissões por roles (`ROLE_user`). |
+| **Testes Automatizados** | Estratégia de testes combinando testes unitários (**xUnit**, **Moq**, **FluentAssertions**, **JUnit 5**, **Mockito**), testes de integração e validação de contratos. |
 
 ---
 
-## Quick Start Guide
+## Guia de Inicialização Rápida
 
-### Prerequisites
-* [Docker & Docker Compose](https://www.docker.com/)
-* [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
+### Pré-requisitos
+* [Docker e Docker Compose](https://www.docker.com/)
+* [SDK do .NET 8](https://dotnet.microsoft.com/download/dotnet/8.0)
 * [Java Development Kit (JDK 21)](https://adoptium.net/)
 * [Maven 3.9+](https://maven.apache.org/)
 
-### 1. Launch Keycloak & Local Databases
+### 1. Iniciar o Keycloak e Banco de Dados de Usuários
 ```bash
-# Start MySQL instance and Keycloak Identity Server
+# Inicia MySQL e Keycloak Identity Server
 cd users-api
 docker compose up -d
 ```
-Keycloak will be accessible at `http://localhost:8080` (Realm: `local-dev`).
+O Keycloak estará disponível em `http://localhost:8080` (Realm: `local-dev`).
 
-### 2. Run Database Migrations (Liquibase)
+### 2. Executar Migrações do Banco de Dados CIS (Liquibase)
 ```bash
-# Execute automated schema migrations for sd3_cisdb
+# Executa migrações automáticas de esquema para sd3_cisdb
 cd ../cis-api/Data
 docker compose up
 ```
 
-### 3. Run the Mock API Servers
+### 3. Iniciar os Servidores Mock das APIs
 ```bash
-# Start CIS API mock server (port 4020)
+# Inicia o servidor mock da CIS API (porta 4020)
 cd ../../cis-api-swagger
 docker compose up -d
 
-# Start Users API mock server (port 4010)
+# Inicia o servidor mock da Users API (porta 4010)
 cd ../users-api-swagger
 docker compose up -d
 ```
 
-### 4. Run the Backend Services
+### 4. Executar os Serviços Backend
 * **Users API (Java):**
   ```bash
   cd ../users-api
@@ -153,14 +155,3 @@ docker compose up -d
   dotnet restore
   dotnet run --project src/Cis.Server
   ```
-
----
-
-## Author
-
-**Maycon Vyctor**  
-*Software Engineering | Distributed Systems & Cloud Architecture*  
-* [GitHub Profile](https://github.com/MayconVyctor)
-
----
-*Developed as part of the Software Engineering Capstone Project — Jala University.*
