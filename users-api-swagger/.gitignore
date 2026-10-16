@@ -1,0 +1,34 @@
+# .gitignore
+
+# Operating system files
+
+.DS_Store
+Thumbs.db
+
+# Visual Studio Code
+
+.vscode/
+
+# JetBrains IDEs
+
+.idea/
+
+# Docker
+
+*.log
+
+# Local environment files
+
+.env
+.env.local
+
+# Temporary files
+
+*.tmp
+*.temp
+
+# OS/editor backup files
+
+*~
+*.swp
+*.swo

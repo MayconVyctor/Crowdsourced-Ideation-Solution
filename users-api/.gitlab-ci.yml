@@ -1,0 +1,27 @@
+image: maven:3.9.9-eclipse-temurin-21
+
+stages:
+  - build
+  - test
+  - style
+  - static-analysis
+
+build:
+  stage: build
+  script:
+    - mvn clean compile
+
+test:
+  stage: test
+  script:
+    - mvn test
+
+style:
+  stage: style
+  script:
+    - mvn checkstyle:check
+
+static-analysis:
+  stage: static-analysis
+  script:
+    - mvn clean compile spotbugs:check

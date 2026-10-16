@@ -1,0 +1,4 @@
+FROM liquibase/liquibase:5.0.1
+
+ADD ./MySQL/Changelog/ /liquibase/MySQL/Changelog/
+ADD ./Drivers/*.jar /liquibase/internal/lib/

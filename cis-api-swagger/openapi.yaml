@@ -1,0 +1,641 @@
+openapi: 3.0.3
+
+info:
+  title: CIS API 
+  version: 1.0.0
+  description: API-First contract for the Continuous Improvement System (CIS) - Topics, Ideas, and Votes.
+
+servers:
+  - url: http://localhost:4020
+    description: Mock Server (Prism)
+
+security:
+  - bearerAuth: []
+
+paths:
+
+  /health:
+    get:
+      summary: Check CIS API health
+      description: Returns the current health status of the CIS API.
+      operationId: getHealth
+      security: []
+      responses:
+        '200':
+          description: CIS API is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+              example:
+                status: Healthy
+                service: CIS API
+                version: 1.0.0
+        '503':
+          description: CIS API is unhealthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+              example:
+                status: Unhealthy
+                service: CIS API
+                version: 1.0.0
+
+  # =========================================================================
+  # 1. TOPICS ENDPOINTS
+  # =========================================================================
+  /api/v1/topics:
+    post:
+      summary: Create Topic
+      description: Creates a new discussion topic.
+      operationId: createTopic
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TopicCreateRequest'
+            example:
+              title: "clean architecture"
+              description: "Research clean architecture design principles"
+      responses:
+        '201':
+          description: Created - Topic successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TopicResponse'
+              examples:
+                zeroIdeas:
+                  summary: Example with zero ideas
+                  value:
+                    id: 2
+                    title: "clean architecture"
+                    description: "Research clean architecture design principles"
+                    status: "open"
+                    ideaCount: 0
+                    owner:
+                      id: 1
+                      login: "mmg"
+                    createdAt: "2026-09-28T13:12:00Z"
+                    updatedAt: "2026-09-28T13:12:00Z"
+                withIdeas:
+                  summary: Example with 1 or more ideas
+                  value:
+                    id: 2
+                    title: "clean architecture"
+                    description: "Research clean architecture design principles"
+                    status: "open"
+                    ideaCount: 10
+                    owner:
+                      id: 1
+                      login: "mmg"
+                    createdAt: "2026-09-28T13:12:00Z"
+                    updatedAt: "2026-09-28T13:12:00Z"
+        '400':
+          description: Bad Request - Validation failed (title or description is null/empty)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 400
+                error: "Bad Request"
+                message: "Validation failed: title and description must not be empty"
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+    get:
+      summary: List all Topics
+      description: Returns an array of all available topics.
+      operationId: listAllTopics
+      responses:
+        '200':
+          description: OK - Array of topics retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TopicListResponse'
+              examples:
+                withTopics:
+                  summary: One or more topics
+                  value:
+                    items:
+                      - id: 6
+                        title: "clean architecture"
+                        description: "Research clean architecture design principles"
+                        status: "open"
+                        ideaCount: 1
+                        owner:
+                          id: 1
+                          login: "mmg"
+                        createdAt: "2026-09-28T13:12:00Z"
+                        updatedAt: "2026-09-28T13:12:00Z"
+                zeroTopics:
+                  summary: Zero topics
+                  value:
+                    items: []
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  # =========================================================================
+  # 2. IDEAS ENDPOINTS
+  # =========================================================================
+  /api/v1/topic/{id}/ideas:
+    post:
+      summary: Create Idea
+      description: Creates a new idea associated with a specific topic.
+      operationId: createIdea
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The numeric ID of the topic
+          schema:
+            type: integer
+            example: 100
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IdeaCreateRequest'
+            example:
+              title: "design"
+              description: "Separation of Concerns"
+      responses:
+        '201':
+          description: Created - Idea successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdeaResponse'
+              examples:
+                zeroVotes:
+                  summary: Example with zero votes
+                  value:
+                    id: 1
+                    topicId: 100
+                    title: "design"
+                    description: "Separation of Concerns"
+                    voteCount: 0
+                    owner:
+                      id: 1
+                      login: "mmg"
+                    createdAt: "2026-09-28T13:12:00Z"
+                    updatedAt: "2026-09-28T13:12:00Z"
+                withVotes:
+                  summary: Example with 1 or more votes
+                  value:
+                    id: 1
+                    topicId: 100
+                    title: "design"
+                    description: "Separation of Concerns"
+                    voteCount: 10
+                    owner:
+                      id: 1
+                      login: "mmg"
+                    createdAt: "2026-09-28T13:12:00Z"
+                    updatedAt: "2026-09-28T13:12:00Z"
+        '400':
+          description: Bad Request - Validation failed (title or description is null/empty)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 400
+                error: "Bad Request"
+                message: "Validation failed: title and description must not be empty"
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          description: Resource not found - Topic not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 404
+                error: "Not Found"
+                message: "Topic not found"
+        '409':
+          description: Operation not allowed - Topic is closed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 409
+                error: "Conflict"
+                message: "Operation not allowed: topic is closed"
+
+  # =========================================================================
+  # 3. VOTING ENDPOINTS
+  # =========================================================================
+  /api/v1/ideas/{ideaId}/vote:
+    put:
+      summary: Voting for an Idea
+      description: Records a vote for the specified idea.
+      operationId: voteForIdea
+      parameters:
+        - name: ideaId
+          in: path
+          required: true
+          description: The numeric ID of the idea
+          schema:
+            type: integer
+            example: 6
+      responses:
+        '200':
+          description: OK - Vote recorded (or already present)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VoteResponse'
+              examples:
+                zeroVotes:
+                  summary: Example with zero votes
+                  value:
+                    ideaId: 6
+                    voteCount: 0
+                    createdAt: "2026-09-28T13:12:00Z"
+                    updatedAt: "2026-09-28T13:12:00Z"
+                withVotes:
+                  summary: Example with 1 or more votes
+                  value:
+                    ideaId: 6
+                    voteCount: 10
+                    createdAt: "2026-09-28T13:12:00Z"
+                    updatedAt: "2026-09-28T13:12:00Z"
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          description: Resource not found - Idea not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 404
+                error: "Not Found"
+                message: "Idea not found"
+        '409':
+          description: Operation not allowed - Topic is closed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 409
+                error: "Conflict"
+                message: "Operation not allowed: topic is closed"
+
+    delete:
+      summary: Removing a vote from an Idea
+      description: Removes a vote from the specified idea.
+      operationId: removeVoteFromIdea
+      parameters:
+        - name: ideaId
+          in: path
+          required: true
+          description: The numeric ID of the idea
+          schema:
+            type: integer
+            example: 6
+      responses:
+        '200':
+          description: OK - Vote removed (or already absent)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VoteResponse'
+              examples:
+                zeroVotes:
+                  summary: Example with zero votes
+                  value:
+                    ideaId: 6
+                    voteCount: 0
+                    createdAt: "2026-09-28T13:12:00Z"
+                    updatedAt: "2026-09-28T13:12:00Z"
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          description: Resource not found - Idea not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 404
+                error: "Not Found"
+                message: "Idea not found"
+        '409':
+          description: Operation not allowed - Topic is closed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 409
+                error: "Conflict"
+                message: "Operation not allowed: topic is closed"
+
+  /api/v1/ideas/{ideaId}/votes:
+    get:
+      summary: List the Users who voted for an Idea
+      description: Returns the voters of an idea, newest vote first, plus the total count.
+      operationId: listIdeaVoters
+      parameters:
+        - name: ideaId
+          in: path
+          required: true
+          description: The numeric ID of the idea
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: OK - List of voters retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VotersListResponse'
+              examples:
+                withVoters:
+                  summary: 1 or more votes
+                  value:
+                    ideaId: 1
+                    items:
+                      - votedBy:
+                          id: 2
+                          login: "abc"
+                        votedAt: "2026-10-01T02:00:08.924Z"
+                    totalCount: 10
+                zeroVotes:
+                  summary: Zero votes
+                  value:
+                    ideaId: 1
+                    items: []
+                    totalCount: 0
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          description: Resource not found - Idea not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 404
+                error: "Not Found"
+                message: "Idea not found"
+
+# =============================================================================
+# COMPONENTS AND SCHEMAS
+# =============================================================================
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Enter your Bearer token in the format "Bearer <token>"
+
+  responses:
+    UnauthorizedError:
+      description: Unauthorized - Access token is missing or invalid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            status: 401
+            error: "Unauthorized"
+            message: "Access token is missing or invalid"
+
+  schemas:
+    UserRef:
+      type: object
+      required:
+        - id
+        - login
+      properties:
+        id:
+          type: integer
+          example: 1
+        login:
+          type: string
+          example: "mmg"
+
+    # 1. Tópicos
+    TopicCreateRequest:
+      type: object
+      required:
+        - title
+        - description
+      properties:
+        title:
+          type: string
+          minLength: 1
+          example: "clean architecture"
+        description:
+          type: string
+          minLength: 1
+          example: "Research clean architecture design principles"
+
+    TopicResponse:
+      type: object
+      required:
+        - id
+        - title
+        - description
+        - status
+        - ideaCount
+        - owner
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: integer
+          example: 2
+        title:
+          type: string
+          example: "clean architecture"
+        description:
+          type: string
+          example: "Research clean architecture design principles"
+        status:
+          type: string
+          example: "open"
+        ideaCount:
+          type: integer
+          example: 0
+        owner:
+          $ref: '#/components/schemas/UserRef'
+        createdAt:
+          type: string
+          format: date-time
+          example: "2026-09-28T13:12:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2026-09-28T13:12:00Z"
+
+    TopicListResponse:
+      type: object
+      required:
+        - items
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/TopicResponse'
+
+    # 2. Ideias
+    IdeaCreateRequest:
+      type: object
+      required:
+        - title
+        - description
+      properties:
+        title:
+          type: string
+          minLength: 1
+          example: "design"
+        description:
+          type: string
+          minLength: 1
+          example: "Separation of Concerns"
+
+    IdeaResponse:
+      type: object
+      required:
+        - id
+        - topicId
+        - title
+        - description
+        - voteCount
+        - owner
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: integer
+          example: 1
+        topicId:
+          type: integer
+          example: 100
+        title:
+          type: string
+          example: "design"
+        description:
+          type: string
+          example: "Separation of Concerns"
+        voteCount:
+          type: integer
+          example: 0
+        owner:
+          $ref: '#/components/schemas/UserRef'
+        createdAt:
+          type: string
+          format: date-time
+          example: "2026-09-28T13:12:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2026-09-28T13:12:00Z"
+
+    # 3. Votos
+    VoteResponse:
+      type: object
+      required:
+        - ideaId
+        - voteCount
+        - createdAt
+        - updatedAt
+      properties:
+        ideaId:
+          type: integer
+          example: 6
+        voteCount:
+          type: integer
+          default: 0
+          example: 10
+        createdAt:
+          type: string
+          format: date-time
+          example: "2026-09-28T13:12:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2026-09-28T13:12:00Z"
+
+    VoteItem:
+      type: object
+      required:
+        - votedBy
+        - votedAt
+      properties:
+        votedBy:
+          $ref: '#/components/schemas/UserRef'
+        votedAt:
+          type: string
+          format: date-time
+          example: "2026-10-01T02:00:08.924Z"
+
+    VotersListResponse:
+      type: object
+      required:
+        - ideaId
+        - items
+        - totalCount
+      properties:
+        ideaId:
+          type: integer
+          example: 1
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/VoteItem'
+        totalCount:
+          type: integer
+          default: 0
+          example: 10
+
+    # 4. Erro Padronizado
+    ErrorResponse:
+      type: object
+      required:
+        - status
+        - error
+        - message
+      properties:
+        status:
+          type: integer
+          example: 400
+        error:
+          type: string
+          example: "Bad Request"
+        message:
+          type: string
+          example: "Validation failed"
+
+    # 5. Health Check
+    HealthResponse:
+      type: object
+      required:
+        - status
+        - service
+        - version
+      properties:
+        status:
+          type: string
+          example: Healthy
+        service:
+          type: string
+          example: CIS API
+        version:
+          type: string
+          example: 1.0.0

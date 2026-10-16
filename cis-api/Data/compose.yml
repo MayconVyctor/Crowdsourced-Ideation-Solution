@@ -1,0 +1,19 @@
+services:
+  migrations-mysql:
+    build:
+      context: .
+      dockerfile: dockerfile
+    environment:
+      LIQUIBASE_COMMAND_USERNAME: ${LIQUIBASE_COMMAND_USERNAME}
+      LIQUIBASE_COMMAND_PASSWORD: ${LIQUIBASE_COMMAND_PASSWORD}
+    networks:
+      - users-api-network
+    command:
+      - /bin/bash
+      - -c
+      - |
+        liquibase --changeLogFile=./MySQL/Changelog/main.xml --url="${sd3_cisdb_CONNECTION}" status
+
+networks:
+  users-api-network:
+    external: true

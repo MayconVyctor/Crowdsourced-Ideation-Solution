@@ -1,0 +1,15 @@
+services:
+
+  cis-api:
+    image: stoplight/prism:5.14.3
+    command:
+      - mock
+      - -h
+      - 0.0.0.0
+      - -p
+      - "4020"
+      - /openapi/openapi.yaml
+    ports:
+      - "4020:4020"
+    volumes:
+      - ./openapi.yaml:/openapi/openapi.yaml:ro

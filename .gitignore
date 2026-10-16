@@ -1,0 +1,26 @@
+# IDE and Editor
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Environment and sensitive keys
+.env
+.env.*
+*.env
+!.env.example
+
+# .NET / C# build outputs
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Java build outputs
+target/
+*.class
+
+# Logs
+*.log

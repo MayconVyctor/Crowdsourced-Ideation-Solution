@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Cis.Core.Application/Cis.Core.Application.csproj" />
+    <Project Path="src/Cis.Core.Domain/Cis.Core.Domain.csproj" />
+    <Project Path="src/Cis.Infrastructure.Ioc/Cis.Infrastructure.Ioc.csproj" />
+    <Project Path="src/Cis.Infrastructure.MySql/Cis.Infrastructure.MySql.csproj" />
+    <Project Path="src/Cis.Presentation/Cis.Presentation.csproj" />
+    <Project Path="src/Cis.Server/Cis.Server.csproj" />
+  </Folder>
+</Solution>

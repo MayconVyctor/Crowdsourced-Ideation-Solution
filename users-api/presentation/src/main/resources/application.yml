@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: users-api
+
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3307/sd3db}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:sd5}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${KEYCLOAK_ISSUER_URI:http://127.0.0.1:8080/realms/local-dev}
+
+server:
+  port: ${SERVER_PORT:8001}

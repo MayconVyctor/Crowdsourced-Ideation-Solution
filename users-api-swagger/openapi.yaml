@@ -1,0 +1,243 @@
+openapi: 3.0.3
+
+info:
+  title: Users API
+  version: 1.1.0
+  description: Users REST API - v1.1.0 (Added server-managed createdAt and updatedAt timestamps to UserResponse)
+
+servers:
+  - url: http://localhost:4010
+
+paths:
+
+  /health:
+    get:
+      summary: Check API health
+      operationId: getHealth
+      responses:
+        '200':
+          description: API is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+              example:
+                status: Healthy
+                service: Users API
+                version: 1.0.0
+
+        '503':
+          description: API is unhealthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+              example:
+                status: Unhealthy
+                service: Users API
+                version: 1.0.0
+  /api/v1/users:
+    post:
+      summary: Create a User
+      description: Creates a new user with the provided name and login.
+      operationId: createUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreateRequest'
+            example:
+              name: "Maycon Vyctor"
+              login: "mvyctor"
+              password: "password123"
+      responses:
+        '201':
+          description: Created - User successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '400':
+          description: Bad Request - Invalid input data
+    get:
+      summary: List Users
+      description: Retrieves a list of all users.
+      operationId: listUsers
+      responses:
+        '200':
+          description: OK - List of users retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserResponse'
+        '500':
+          description: Internal Server Error - Unable to retrieve users
+
+  /api/v1/users/{id}:
+    get:
+      summary: Read a User
+      description: Retrieves a single user by their unique UUID.
+      operationId: getUserById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The unique UUID of the user
+          schema:
+            type: string
+            format: uuid
+            example: "123e4567-e89b-12d3-a456-426614174000"
+      responses:
+        '200':
+          description: OK - User found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '400':
+          description: Bad Request - Invalid ID format
+        '404':
+          description: Not Found - User does not exist
+    put: 
+      summary: Update a User
+      description: Updates an existing user's information by their unique UUID. The createdAt timestamp remains unchanged, while updatedAt is updated to the current modification time
+      operationId: updateUserById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The unique UUID of the user to update
+          schema:
+            type: string
+            format: uuid
+            example: "123e4567-e89b-12d3-a456-426614174000"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdateRequest'
+            example:
+              name: "Maycon Vyctor Updated"
+              login: "mvyctor_updated"
+              password: "newpassword123"
+      responses:
+        '200':
+          description: OK - User successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '400':
+          description: Bad Request - Invalid input data or ID format
+        '404':
+          description: Not Found - User does not exist
+    delete:
+      summary: Delete a User
+      description: Deletes a user by their unique UUID.
+      operationId: deleteUserById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The unique UUID of the user to delete
+          schema:
+            type: string
+            format: uuid
+            example: "123e4567-e89b-12d3-a456-426614174000"
+      responses:
+        '204':  
+          description: No Content - User successfully deleted
+        '400':
+          description: Bad Request - Invalid ID format
+        '404':
+          description: Not Found - User does not exist
+
+
+components:
+
+  schemas:
+
+    HealthResponse:
+      type: object
+      required:
+        - status
+        - service
+        - version
+      properties:
+        status:
+          type: string
+          example: Healthy
+        service:
+          type: string
+          example: Users API
+        version:
+          type: string
+          example: 1.0.0
+          
+    UserCreateRequest:
+      type: object
+      description: Request payload to create a new user. Server-managed fields like createdAt and updatedAt are not accepted as input.
+      required:
+        - name
+        - login
+        - password
+      properties:
+        name:
+          type: string
+          example: "Maycon Vyctor"
+        login:
+          type: string
+          example: "mvyctor"
+        password:
+          type: string
+          example: "password123"
+
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        name:
+          type: string
+          example: "Maycon Vyctor"
+        login:
+          type: string
+          example: "mvyctor"
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+          description: ISO-8601 UTC timestamp set automatically by the database on creation. Never client-controlled.
+          example: "2026-09-09T10:00:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true
+          description: ISO-8601 UTC timestamp set automatically by the database on modification. Never client-controlled.
+          example: "2026-09-30T17:00:00Z"
+
+    UserUpdateRequest:
+      type: object
+      description: Request payload to update an existing user. Server-managed fields like createdAt and updatedAt are not accepted as input.
+      properties:
+        name:
+          type: string
+          example: "Maycon Vyctor Updated"
+        login:
+          type: string
+          example: "mvyctor_updated"
+        password:
+          type: string
+          example: "newpassword123"
+    UserDeleteResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "User successfully deleted"

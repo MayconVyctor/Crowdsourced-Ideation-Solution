@@ -1,0 +1,6 @@
+@Cis.Server_HostAddress = http://localhost:5115
+
+GET {{Cis.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

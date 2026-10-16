@@ -1,0 +1,19 @@
+# Variáveis de ambiente e credenciais locais
+.env
+.env.*
+Data/.env
+Data/.env.*
+
+# Exceção para exemplos sem credenciais reais
+!.env.example
+!Data/.env.example
+
+# IDE
+.idea/
+.vscode/
+
+# Build e arquivos temporários do .NET
+bin/
+obj/
+*.user
+*.suo
