@@ -1,5 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <ItemGroup>
+    <ProjectReference Include="..\Cis.Presentation\Cis.Presentation.csproj" />
+    <ProjectReference Include="..\Cis.Core.Application\Cis.Core.Application.csproj" />
+    <ProjectReference Include="..\Cis.Infrastructure.MySql\Cis.Infrastructure.MySql.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.13" />
+  </ItemGroup>
+
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>

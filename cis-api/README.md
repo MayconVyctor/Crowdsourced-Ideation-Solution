@@ -1,93 +1,142 @@
-# cis api
+# CIS API
 
+## 1. Sobre o projeto
 
+A CIS API é uma API REST desenvolvida em C# com ASP.NET Core e .NET 10. O projeto tem como objetivo disponibilizar endpoints para consulta e gerenciamento de tópicos, seguindo uma arquitetura organizada em camadas.
 
-## Getting started
+Nesta etapa, foi criada a estrutura inicial da aplicação, configurada a injeção de dependências e implementado o endpoint inicial para consulta de tópicos.
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+## 2. Tecnologias utilizadas
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+- C#
+- .NET 10
+- ASP.NET Core
+- Docker
+- Docker Compose
+- MySQL e Liquibase para a infraestrutura de banco de dados e migrações futuras
 
-## Add your files
+## 3. Estrutura do projeto
 
-* [Create](https://docs.gitlab.com/user/project/repository/web_editor/#create-a-file) or [upload](https://docs.gitlab.com/user/project/repository/web_editor/#upload-a-file) files
-* [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
+A solução está organizada nos seguintes projetos:
 
+- **Cis.Core.Domain:** contém as entidades do domínio.
+- **Cis.Core.Application:** contém os serviços da aplicação.
+- **Cis.Presentation:** contém os controllers e os objetos de resposta da API.
+- **Cis.Infrastructure.MySql:** contém os componentes de infraestrutura relacionados ao MySQL.
+- **Cis.Infrastructure.Ioc:** centraliza a composição das dependências.
+- **Cis.Server:** inicializa e executa a aplicação.
+
+A pasta `Data/` contém os arquivos relacionados às migrações do banco de dados com Liquibase. A pasta `tests/` está reservada para os testes automatizados.
+
+## 4. Requisitos
+
+Para executar o projeto localmente, é necessário ter:
+
+- .NET SDK 10.0.112
+- Git
+
+Para executar a aplicação em container, também é necessário ter Docker e Docker Compose instalados.
+
+## 5. Como executar localmente
+
+Na raiz do repositório, execute os seguintes comandos:
+
+```bash
+dotnet restore Cis.slnx
+dotnet build Cis.slnx
+dotnet run --project src/Cis.Server/Cis.Server.csproj --launch-profile http
 ```
-cd existing_repo
-git remote add origin https://gitlab.com/jala-university1/cohort-6/PT.CO.CSSD-232.GA.T2.26.M2/SA/group-2/cis-api.git
-git branch -M main
-git push -uf origin main
+
+A aplicação estará disponível em:
+
+`http://localhost:9001`
+
+## 6. Endpoint disponível
+
+### Listar tópicos
+
+**Método:** `GET`
+
+**Rota:** `/api/v1/topics`
+
+Exemplo de requisição:
+
+```bash
+curl -i http://localhost:9001/api/v1/topics
 ```
 
-## Integrate with your tools
+Resposta esperada nesta etapa:
 
-* [Set up project integrations](https://gitlab.com/jala-university1/cohort-6/PT.CO.CSSD-232.GA.T2.26.M2/SA/group-2/cis-api/-/settings/integrations)
+- **Código HTTP:** `200 OK`
+- **Corpo JSON:**
 
-## Collaborate with your team
+```json
+[]
+```
 
-* [Invite team members and collaborators](https://docs.gitlab.com/user/project/members/)
-* [Create a new merge request](https://docs.gitlab.com/user/project/merge_requests/creating_merge_requests/)
-* [Automatically close issues from merge requests](https://docs.gitlab.com/user/project/issues/managing_issues/#closing-issues-automatically)
-* [Enable merge request approvals](https://docs.gitlab.com/user/project/merge_requests/approvals/)
-* [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+O endpoint retorna uma lista vazia. A consulta real ao banco de dados ainda não foi implementada.
 
-## Test and Deploy
+## 7. Execução com Docker Compose
 
-Use the built-in continuous integration in GitLab.
+Na raiz do repositório, crie o arquivo local de variáveis de ambiente:
 
-* [Get started with GitLab CI/CD](https://docs.gitlab.com/ci/quick_start/)
-* [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/user/application_security/sast/)
-* [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/topics/autodevops/requirements/)
-* [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/user/clusters/agent/)
-* [Set up protected environments](https://docs.gitlab.com/ci/environments/protected_environments/)
+```bash
+cp .env.example .env
+```
 
-***
+Revise o arquivo `.env` de acordo com o ambiente em que a aplicação será executada.
 
-# Editing this README
+Em seguida, construa a imagem e inicie a API:
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+```bash
+docker compose up --build
+```
 
-## Suggestions for a good README
+A API estará disponível em:
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+`http://localhost:9001`
 
-## Name
-Choose a self-explaining name for your project.
+Para encerrar a aplicação, execute:
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+```bash
+docker compose down
+```
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+O arquivo `.env` contém configurações locais e não deve ser enviado ao repositório. O arquivo `.env.example` contém apenas valores ilustrativos.
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+## 8. Configuração do banco de dados
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+O banco de dados previsto para o projeto é `sd3_cisdb`. As variáveis de ambiente documentadas para uma futura configuração de conexão são:
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+- `DB_HOST`: endereço do servidor MySQL.
+- `DB_PORT`: porta do servidor MySQL.
+- `DB_NAME`: nome do banco de dados.
+- `DB_USERNAME`: usuário do banco.
+- `DB_PASSWORD`: senha do banco.
+- `SERVER_PORT`: porta publicada para acessar a API.
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+Essas variáveis estão preparadas para configuração externa. Nesta etapa, a aplicação ainda não estabelece uma conexão real com o MySQL nem realiza consultas aos dados.
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+Quando a API estiver em um container, `DB_HOST=localhost` aponta para o próprio container, e não para o computador host. O endereço deverá ser ajustado conforme a configuração do ambiente.
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+## 9. Migrações do banco de dados
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+Os arquivos de migração estão localizados na pasta `Data/` e utilizam Liquibase.
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+A execução das migrações é independente da inicialização da API. O `docker-compose.yml` da raiz inicia a API, enquanto `Data/compose.yml` mantém a configuração específica das migrações.
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+## 10. Estado atual do projeto
 
-## License
-For open source projects, say how it is licensed.
+Nesta etapa, foram implementados:
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+- Estrutura inicial dos projetos e suas referências.
+- Entidade de domínio `Topic`.
+- Serviço inicial `TopicQueryService`.
+- Repositório inicial `TopicRepository`.
+- Registro de dependências por meio de extensões de `IServiceCollection`.
+- Controller `TopicQueryController`.
+- Endpoint `GET /api/v1/topics`, com resposta HTTP `200 OK` e lista vazia.
+- Inicialização da aplicação na porta HTTP `9001`.
+- Arquivos iniciais para execução com Docker.
+
+A consulta real ao banco, a persistência completa e outros recursos da API serão implementados em etapas posteriores.

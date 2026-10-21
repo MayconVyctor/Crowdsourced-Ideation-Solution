@@ -1,0 +1,21 @@
+services:
+  cis-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "${SERVER_PORT:-9001}:9001"
+    environment:
+      ASPNETCORE_URLS: "http://+:9001"
+      ConnectionStrings__CisDatabase: "Server=${DB_HOST:-sd3db};Port=${DB_PORT:-3306};Database=${DB_NAME:-sd3_cisdb};User ID=${DB_USERNAME:-change_me};Password=${DB_PASSWORD:-change_me}"
+      DB_HOST: "${DB_HOST:-sd3db}"
+      DB_PORT: "${DB_PORT:-3306}"
+      DB_NAME: "${DB_NAME:-sd3_cisdb}"
+      DB_USERNAME: "${DB_USERNAME:-change_me}"
+      DB_PASSWORD: "${DB_PASSWORD:-change_me}"
+    networks:
+      - users-api-network
+
+networks:
+  users-api-network:
+    external: true
