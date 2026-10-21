@@ -1,0 +1,34 @@
+image: mcr.microsoft.com/dotnet/sdk:10.0
+
+variables:
+  DOTNET_CLI_TELEMETRY_OPTOUT: "true"
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: "true"
+
+stages:
+  - build
+  - test
+  - style
+  - static-analysis
+
+build:
+  stage: build
+  script:
+    - dotnet restore Cis.slnx
+    - dotnet build Cis.slnx --configuration Release --no-restore
+
+test:
+  stage: test
+  script:
+    - dotnet test Cis.slnx --configuration Release
+
+style:
+  stage: style
+  script:
+    - dotnet format Cis.slnx --verify-no-changes --severity info
+
+static-analysis:
+  stage: static-analysis
+  script:
+    - dotnet format analyzers Cis.slnx --verify-no-changes
+    - dotnet list Cis.slnx package --vulnerable --include-transitive
+
