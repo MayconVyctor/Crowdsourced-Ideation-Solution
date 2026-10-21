@@ -8,7 +8,7 @@ builder.Services
     .AddApplicationPart(typeof(TopicQueryController).Assembly);
 
 builder.Services.AddOpenApi();
-builder.Services.AddCisInfrastructure();
+builder.Services.AddCisInfrastructure(builder.Configuration);
 
 var app = builder.Build();
 
