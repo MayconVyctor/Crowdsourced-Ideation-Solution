@@ -12,7 +12,7 @@ services:
       - /bin/bash
       - -c
       - |
-        liquibase --changeLogFile=./MySQL/Changelog/main.xml --url="${sd3_cisdb_CONNECTION}" status
+        liquibase --changeLogFile=./MySQL/Changelog/main.xml --url="${sd3_cisdb_CONNECTION}" update
 
 networks:
   users-api-network:

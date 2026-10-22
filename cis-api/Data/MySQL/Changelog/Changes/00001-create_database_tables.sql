@@ -1,0 +1,57 @@
+--liquibase formatted sql
+
+--changeset ellen.garcez:1 runOnChange:true
+
+CREATE TABLE IF NOT EXISTS users (
+    id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    source_id VARCHAR(255) NOT NULL,
+    login VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id)
+    );
+
+CREATE TABLE IF NOT EXISTS topics (
+    id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    title VARCHAR(255) NOT NULL UNIQUE,
+    description TEXT NOT NULL,
+    status VARCHAR(50) NOT NULL DEFAULT 'open',
+    user_id BIGINT UNSIGNED NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    CONSTRAINT fk_topics_user
+    FOREIGN KEY (user_id) REFERENCES users(id)
+    );
+
+CREATE TABLE IF NOT EXISTS ideas (
+    id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    title VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
+    user_id BIGINT UNSIGNED NOT NULL,
+    topic_id BIGINT UNSIGNED,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    CONSTRAINT fk_ideas_user
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    CONSTRAINT fk_ideas_topic
+    FOREIGN KEY (topic_id) REFERENCES topics(id)
+    );
+
+CREATE TABLE IF NOT EXISTS votes (
+    id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    user_id BIGINT UNSIGNED NOT NULL,
+    topic_id BIGINT UNSIGNED NOT NULL,
+    idea_id BIGINT UNSIGNED NOT NULL,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    CONSTRAINT fk_votes_user
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    CONSTRAINT fk_votes_topic
+    FOREIGN KEY (topic_id) REFERENCES topics(id),
+    CONSTRAINT fk_votes_idea
+    FOREIGN KEY (idea_id) REFERENCES ideas(id)
+    );
