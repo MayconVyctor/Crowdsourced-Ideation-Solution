@@ -1,5 +1,6 @@
 using Cis.Infrastructure.Ioc.DependencyInjection;
 using Cis.Presentation.Controllers;
+using global::Cis.Server.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +18,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
