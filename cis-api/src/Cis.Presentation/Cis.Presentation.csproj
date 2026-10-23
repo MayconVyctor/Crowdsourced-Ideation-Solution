@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <ProjectReference Include="..\Cis.Core.Application\Cis.Core.Application.csproj" />
     <ProjectReference Include="..\Cis.Core.Domain\Cis.Core.Domain.csproj" />
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>

@@ -1,3 +1,4 @@
+using Cis.Core.Domain.Repositories;
 using Cis.Infrastructure.MySql.Context;
 using Cis.Infrastructure.MySql.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -24,6 +25,7 @@ public static class ServiceCollectionExtensions
         services.AddDbContext<CisDbContext>(options =>
             options.UseMySQL(connectionString));
 
+        services.AddScoped<ITopicRepository, TopicRepository>();
         services.AddScoped<TopicRepository>();
 
         return services;

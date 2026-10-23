@@ -8,6 +8,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
         services.AddScoped<TopicQueryService>();
+        services.AddScoped<ITopicCommandService, TopicCommandService>();
 
         return services;
     }

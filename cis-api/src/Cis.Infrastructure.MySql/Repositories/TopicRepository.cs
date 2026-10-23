@@ -1,11 +1,17 @@
-using Cis.Core.Domain.Entities;
+using Cis.Core.Domain.Repositories;
+using Cis.Infrastructure.MySql.Context;
+using Cis.Infrastructure.MySql.Mappers;
+using DomainTopic = Cis.Core.Domain.Entities.Topic;
 
 namespace Cis.Infrastructure.MySql.Repositories;
 
-public class TopicRepository
+public class TopicRepository(CisDbContext context) : ITopicRepository
 {
-    public Task<List<Topic>> ReadTopicsAsync()
+    public async Task<DomainTopic> CreateTopicAsync(DomainTopic topic)
     {
-        throw new NotImplementedException();
+        var mySqlEntity = TopicInfrastructureMapper.ToMySqlEntity(topic);
+        await context.Topics.AddAsync(mySqlEntity);
+        await context.SaveChangesAsync();
+        return TopicInfrastructureMapper.ToDomainEntity(mySqlEntity);
     }
 }
