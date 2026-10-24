@@ -7,4 +7,7 @@
     <Project Path="src/Cis.Presentation/Cis.Presentation.csproj" />
     <Project Path="src/Cis.Server/Cis.Server.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Cis.UnitTests/Cis.UnitTests.csproj" />
+  </Folder>
 </Solution>
