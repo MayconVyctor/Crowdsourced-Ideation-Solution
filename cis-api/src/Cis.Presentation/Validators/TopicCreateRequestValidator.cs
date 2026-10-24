@@ -1,6 +1,7 @@
 using Cis.Core.Domain.Exceptions;
 using Cis.Presentation.Requests;
 namespace Cis.Presentation.Validators;
+
 public static class TopicCreateRequestValidator
 {
     public static void Validate(TopicCreateRequest? request)

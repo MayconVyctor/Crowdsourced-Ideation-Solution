@@ -4,5 +4,5 @@ namespace Cis.Core.Domain.Repositories;
 
 public interface ITopicRepository
 {
-    Task<Topic>CreateTopicAsync(Topic topic);
+    Task<Topic> CreateTopicAsync(Topic topic);
 }
