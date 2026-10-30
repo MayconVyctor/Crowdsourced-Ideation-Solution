@@ -23,6 +23,11 @@ public class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<Exception
             logger.LogWarning(ex, "Validation exception caught: {Message}", ex.Message);
             await HandleExceptionAsync(context, StatusCodes.Status400BadRequest, "Bad Request", ex.Message);
         }
+        catch (CisUnprocessableEntityException ex)
+        {
+            logger.LogWarning(ex, "Unprocessable entity caught: {Message}", ex.Message);
+            await HandleExceptionAsync(context, StatusCodes.Status422UnprocessableEntity, "Unprocessable Entity", ex.Message);
+        }
         catch (Exception ex)
         {
             logger.LogError(ex, "Unhandled exception caught: {Message}", ex.Message);

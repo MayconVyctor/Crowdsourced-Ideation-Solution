@@ -1,4 +1,5 @@
 using Cis.Core.Application.Services;
+using Cis.Core.Domain.Exceptions;
 using Cis.Presentation.Mappers;
 using Cis.Presentation.Requests;
 using Cis.Presentation.Responses;
@@ -15,14 +16,19 @@ public class TopicCommandController(ITopicCommandService topicCommandService) : 
     [HttpPost]
     [ProducesResponseType(typeof(TopicResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<TopicResponse>> CreateTopicAsync([FromBody] TopicCreateRequest request)
+    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+    public async Task<ActionResult<TopicResponse>> CreateTopicAsync(
+        [FromHeader(Name = "X-User-Id")] long? userId,
+        [FromBody] TopicCreateRequest request)
     {
+        if (userId is null)
+        {
+            throw new CisValidationException("X-User-Id header is required.");
+        }
+
         TopicCreateRequestValidator.Validate(request);
 
-        // Usuário padrão 1 (sistema) conforme o contrato inicial desta etapa
-        const ulong defaultUserId = 1;
-
-        var topic = await topicCommandService.CreateTopicAsync(request.Title!, request.Description!, defaultUserId);
+        var topic = await topicCommandService.CreateTopicAsync(request.Title!, request.Description!, (ulong)userId.Value);
         var response = TopicPresentationMapper.ToResponse(topic);
 
         return StatusCode(StatusCodes.Status201Created, response);
