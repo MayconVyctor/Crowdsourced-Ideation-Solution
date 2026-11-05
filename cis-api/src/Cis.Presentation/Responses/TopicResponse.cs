@@ -9,4 +9,3 @@ public record TopicResponse(
     UserResponse Owner,
     DateTime CreatedAt,
     DateTime UpdatedAt);
-

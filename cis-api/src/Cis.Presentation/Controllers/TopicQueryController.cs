@@ -1,3 +1,5 @@
+using Cis.Core.Application.Services;
+using Cis.Presentation.Mappers;
 using Cis.Presentation.Responses;
 using Microsoft.AspNetCore.Mvc;
 
@@ -5,11 +7,18 @@ namespace Cis.Presentation.Controllers;
 
 [ApiController]
 [Route("api/v1/topics")]
-public class TopicQueryController : ControllerBase
+public class TopicQueryController(ITopicQueryService topicQueryService)
+    : ControllerBase
 {
     [HttpGet]
-    public ActionResult<List<TopicResponse>> ReadTopicsAsync()
+    public async Task<ActionResult<List<TopicResponse>>> ReadTopicsAsync()
     {
-        return Ok(new List<TopicResponse>());
+        var topics = await topicQueryService.ReadTopicsAsync();
+
+        var responses = topics
+            .Select(TopicResponseMapper.ToResponse)
+            .ToList();
+
+        return Ok(responses);
     }
 }
