@@ -9,6 +9,7 @@ stages:
   - test
   - style
   - static-analysis
+  - migration
 
 build:
   stage: build
@@ -32,3 +33,41 @@ static-analysis:
     - dotnet format analyzers Cis.slnx --verify-no-changes
     - dotnet list Cis.slnx package --vulnerable --include-transitive
 
+mongodb-migration:
+  stage: migration
+  image:
+    name: docker:29.1.3-cli
+    entrypoint: [""]
+  services:
+    - name: docker:29.1.3-dind
+  variables:
+    DOCKER_HOST: tcp://docker:2376
+    DOCKER_TLS_CERTDIR: "/certs"
+    DOCKER_TLS_VERIFY: "1"
+    DOCKER_CERT_PATH: "$DOCKER_TLS_CERTDIR/client"
+  before_script:
+    - apk add --no-cache docker-cli-compose
+    - docker info
+  script:
+    - echo "=== 1. Starting MongoDB ==="
+    - docker compose -f Data/mongodb/docker-compose.yml up -d mongodb
+    - echo "=== 2. Building Liquibase image ==="
+    - docker compose -f Data/mongodb/docker-compose.yml build liquibase
+    - echo "=== 3. Running database migrations with Liquibase ==="
+    - docker compose -f Data/mongodb/docker-compose.yml run --rm liquibase
+    - echo "=== 4. Verifying database collections ==="
+    - |
+      docker compose -f Data/mongodb/docker-compose.yml exec -T mongodb mongosh --quiet --eval '
+        const database = db.getSiblingDB("sd3_cisdb");
+        const expected = ["users", "topics", "ideas", "votes", "counters"];
+        const actual = database.getCollectionNames();
+        print("Collections found: " + actual.join(", "));
+        const missing = expected.filter(name => !actual.includes(name));
+        if (missing.length > 0) {
+          print("Missing collections: " + missing.join(", "));
+          quit(1);
+        }
+        print("All expected collections were created successfully.");
+      '
+  after_script:
+    - docker compose -f Data/mongodb/docker-compose.yml down -v || true
