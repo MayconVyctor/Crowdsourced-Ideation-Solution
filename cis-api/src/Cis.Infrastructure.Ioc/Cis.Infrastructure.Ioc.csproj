@@ -4,6 +4,7 @@
     <ProjectReference Include="..\Cis.Presentation\Cis.Presentation.csproj" />
     <ProjectReference Include="..\Cis.Core.Application\Cis.Core.Application.csproj" />
     <ProjectReference Include="..\Cis.Infrastructure.MySql\Cis.Infrastructure.MySql.csproj" />
+    <ProjectReference Include="..\Cis.Infrastructure.MongoDb\Cis.Infrastructure.MongoDb.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,0 +1,35 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-create-users
+      author: cis-api
+      changes:
+        - createCollection:
+            collectionName: users
+
+  - changeSet:
+      id: 002-create-topics
+      author: cis-api
+      changes:
+        - createCollection:
+            collectionName: topics
+
+  - changeSet:
+      id: 003-create-ideas
+      author: cis-api
+      changes:
+        - createCollection:
+            collectionName: ideas
+
+  - changeSet:
+      id: 004-create-votes
+      author: cis-api
+      changes:
+        - createCollection:
+            collectionName: votes
+
+  - changeSet:
+      id: 005-create-counters
+      author: cis-api
+      changes:
+        - createCollection:
+            collectionName: counters

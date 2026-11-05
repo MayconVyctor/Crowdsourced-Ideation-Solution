@@ -1,13 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-<PropertyGroup>
+  <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
-<ItemGroup>
+  <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.4" />
     <PackageReference Include="FluentAssertions" Version="7.2.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
@@ -16,14 +16,17 @@
     <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4" />
   </ItemGroup>
 
-<ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\..\src\Cis.Core.Application\Cis.Core.Application.csproj" />
     <ProjectReference Include="..\..\src\Cis.Core.Domain\Cis.Core.Domain.csproj" />
     <ProjectReference Include="..\..\src\Cis.Infrastructure.MySql\Cis.Infrastructure.MySql.csproj" />
     <ProjectReference Include="..\..\src\Cis.Presentation\Cis.Presentation.csproj" />
     <ProjectReference Include="..\..\src\Cis.Server\Cis.Server.csproj" />
+    <ProjectReference Include="..\..\src\Cis.Infrastructure.MongoDb\Cis.Infrastructure.MongoDb.csproj" />
   </ItemGroup>
+
   <ItemGroup>
     <Using Include="Xunit" />
   </ItemGroup>
+
 </Project>
