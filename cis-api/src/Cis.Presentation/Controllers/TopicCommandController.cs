@@ -33,4 +33,21 @@ public class TopicCommandController(ITopicCommandService topicCommandService) : 
 
         return StatusCode(StatusCodes.Status201Created, response);
     }
+
+    [HttpPut("{id}/close")]
+    [ProducesResponseType(typeof(TopicResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<TopicResponse>> CloseTopicAsync(
+        [FromRoute] ulong id,
+        [FromHeader(Name = "X-User-Id")] string? userIdHeader)
+    {
+        var userId = TopicCloseValidator.Validate(userIdHeader);
+
+        var topic = await topicCommandService.CloseTopicAsync(id, userId);
+        var response = TopicResponseMapper.ToResponse(topic);
+
+        return Ok(response);
+    }
 }

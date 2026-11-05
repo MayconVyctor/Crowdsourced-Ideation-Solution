@@ -23,10 +23,50 @@ public class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<Exception
             logger.LogWarning(ex, "Validation exception caught: {Message}", ex.Message);
             await HandleExceptionAsync(context, StatusCodes.Status400BadRequest, "Bad Request", ex.Message);
         }
+        catch (TopicNotFoundException ex)
+        {
+            logger.LogWarning(ex, "Topic not found: {Message}", ex.Message);
+            await HandleExceptionAsync(
+                context,
+                StatusCodes.Status404NotFound,
+                "Not Found",
+                ex.Message);
+        }
+        catch (TopicForbiddenException ex)
+        {
+            logger.LogWarning(ex, "Topic forbidden: {Message}", ex.Message);
+            await HandleExceptionAsync(
+                context,
+                StatusCodes.Status403Forbidden,
+                "Forbidden",
+                ex.Message);
+        }
+        catch (TopicClosedException ex)
+        {
+            logger.LogWarning(ex, "Topic closed: {Message}", ex.Message);
+            await HandleExceptionAsync(
+                context,
+                StatusCodes.Status409Conflict,
+                "Conflict",
+                ex.Message);
+        }
+        catch (UserNotFoundException ex)
+        {
+            logger.LogWarning(ex, "User not found: {Message}", ex.Message);
+            await HandleExceptionAsync(
+                context,
+                StatusCodes.Status422UnprocessableEntity,
+                "Unprocessable Entity",
+                ex.Message);
+        }
         catch (CisUnprocessableEntityException ex)
         {
             logger.LogWarning(ex, "Unprocessable entity caught: {Message}", ex.Message);
-            await HandleExceptionAsync(context, StatusCodes.Status422UnprocessableEntity, "Unprocessable Entity", ex.Message);
+            await HandleExceptionAsync(
+                context,
+                StatusCodes.Status422UnprocessableEntity,
+                "Unprocessable Entity",
+                ex.Message);
         }
         catch (Exception ex)
         {
