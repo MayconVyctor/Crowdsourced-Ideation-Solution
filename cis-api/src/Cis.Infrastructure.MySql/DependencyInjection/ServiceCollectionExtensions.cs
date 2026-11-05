@@ -27,7 +27,8 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<ITopicRepository, TopicRepository>();
         services.AddScoped<TopicRepository>();
-
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IIdeaRepository, IdeaRepository>();
         return services;
     }
 }

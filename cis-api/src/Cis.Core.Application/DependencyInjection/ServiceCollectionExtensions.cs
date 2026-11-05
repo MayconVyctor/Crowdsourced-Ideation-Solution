@@ -7,9 +7,10 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
+        services.AddScoped<ITopicQueryService, TopicQueryService>();
         services.AddScoped<TopicQueryService>();
         services.AddScoped<ITopicCommandService, TopicCommandService>();
-
+        services.AddScoped<IIdeaCommandService, IdeaCommandService>();
         return services;
     }
 }
