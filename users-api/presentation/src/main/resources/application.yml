@@ -2,16 +2,12 @@ spring:
   application:
     name: users-api
 
-  datasource:
-    url: ${DB_URL:jdbc:mysql://localhost:3307/sd3db}
-    username: ${DB_USERNAME:root}
-    password: ${DB_PASSWORD:sd5}
-    driver-class-name: com.mysql.cj.jdbc.Driver
+  mongodb:
+    uri: ${MONGO_URI:mongodb://localhost:27018/sd3_usersdb}
 
-  jpa:
-    hibernate:
-      ddl-auto: none
-    show-sql: false
+  data:
+    mongodb:
+      uri: ${MONGO_URI:mongodb://localhost:27018/sd3_usersdb}
 
   security:
     oauth2:

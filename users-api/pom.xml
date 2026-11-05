@@ -18,6 +18,7 @@
         <module>domain</module>
         <module>application</module>
         <module>infrastructure/mysql</module>
+        <module>infrastructure/mongodb</module>
         <module>presentation</module>
     </modules>
 

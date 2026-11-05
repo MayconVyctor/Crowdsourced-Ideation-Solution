@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-create-users
+      author: users-api
+      changes:
+        - createCollection:
+            collectionName: users
+  - changeSet:
+      id: 002-create-counters
+      author: users-api
+      changes:
+        - createCollection:
+            collectionName: counters

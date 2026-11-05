@@ -16,7 +16,7 @@
     <description>
         Spring Boot web layer: REST controllers, request/response DTOs, bean validation,
         and the composition root that wires core-implementation's services on top of
-        infrastructure-mysql's repositories. This is the only module that knows about HTTP.
+        domain repository contracts. This is the only module that knows about HTTP.
     </description>
 
     <dependencies>
@@ -32,7 +32,7 @@
         </dependency>
         <dependency>
             <groupId>jalau</groupId>
-            <artifactId>infrastructure-mysql</artifactId>
+            <artifactId>infrastructure-mongodb</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -43,11 +43,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
         <dependency>
